@@ -1,0 +1,23 @@
+{
+	"info": {
+		"_postman_id": "f6ebbaf5-be35-4224-91c8-f0d457a8e828",
+		"name": "fileUpload",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "localhost",
+			"item": [
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": null
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
