@@ -1,5 +1,6 @@
 var express = require("express");
 var router = express.Router();
+const { spawn } = require('child_process');
 let constants = require("../utils/const.js").constants;
 let errorCodes = require("../utils/errorCodes.js").errorCodes;
 
@@ -91,6 +92,34 @@ router.post("/upload", (req, res) => {
       }
     }
   });
+});
+
+router.get("/python", (req, res) => {
+
+  var dataToSend;
+  // spawn new child process to call the python script
+  const python = spawn("python", ["script/script1.py"], {detached: true});
+  // collect data from script
+  python.stdout.on('data', (data) => {
+    console.log('pattern: ', data.toString());
+    dataToSend = data.toString();
+  });
+  
+  python.stderr.on('data', (data) => {
+    console.error('err: ', data.toString());
+  });
+  
+  python.on('error', (error) => {
+    console.error('error: ', error.message);
+  });
+  
+  python.on('close', (code) => {
+    console.log('child process exited with code ', code);
+    res.json(dataToSend);
+  });
+
+  
+
 });
 
 /* GET home page. */
