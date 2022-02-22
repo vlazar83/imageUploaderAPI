@@ -25,6 +25,7 @@ var storage = multer.diskStorage({
     cb(null, "./public/images");
   },
   filename: (req, file, cb) => {
+    console.log("tttttttttt");
     console.log(file);
     var filetype = "";
     if (file.mimetype === "image/gif") {
@@ -39,7 +40,7 @@ var storage = multer.diskStorage({
     if (file.mimetype === "image/jpg") {
       filetype = "jpg";
     }
-    cb(null, "image-" + Date.now() + "." + filetype);
+    cb(null, file.originalname);
   },
   fileFilter: fileFilter,
 });
@@ -88,6 +89,7 @@ router.post("/upload", (req, res) => {
             "http://localhost:3000/images/" + item.filename
           );
         });
+        executePython(req.files[0].filename, req.files[1].filename);
         res.json({ fileUrls: responseFileNamesArray });
       }
     }
@@ -96,9 +98,13 @@ router.post("/upload", (req, res) => {
 
 router.get("/python", (req, res) => {
 
+  executePython(fileName1, fileName2);
+});
+
+let executePython = async function (fileName1, fileName2) {
   var dataToSend;
   // spawn new child process to call the python script
-  const python = spawn("python", ["script/script1.py"], {detached: true});
+  const python = spawn("python", ["script/filter.py", fileName2], {detached: true});
   // collect data from script
   python.stdout.on('data', (data) => {
     console.log('pattern: ', data.toString());
@@ -115,12 +121,8 @@ router.get("/python", (req, res) => {
   
   python.on('close', (code) => {
     console.log('child process exited with code ', code);
-    res.json(dataToSend);
   });
-
-  
-
-});
+};
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
